@@ -21,6 +21,7 @@ const VistoContext = createContext(null)
 export function VistoProvider({ children }) {
   const { usuario } = useAuth()
   const [vistos, setVistos] = useState([])
+  const [feedback, setFeedback] = useState('')
   const storageKey = `youvisa_vistos_${usuario?.id}`
 
   useEffect(() => {
@@ -45,10 +46,12 @@ export function VistoProvider({ children }) {
     const atualizado = [...vistos, novo]
     setVistos(atualizado)
     localStorage.setItem(storageKey, JSON.stringify(atualizado))
+    setFeedback(`Solicitação de visto "${tipoVisto}" registrada com sucesso!`)
+    setTimeout(() => setFeedback(''), 3500)
   }
 
   return (
-    <VistoContext.Provider value={{ vistos, adicionarVisto }}>
+    <VistoContext.Provider value={{ vistos, adicionarVisto, feedback }}>
       {children}
     </VistoContext.Provider>
   )

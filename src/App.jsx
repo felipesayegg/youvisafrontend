@@ -5,7 +5,9 @@ import { VistoProvider } from './context/VistoContext'
 import LoginScreen from './screens/LoginScreen'
 import HomeScreen from './screens/HomeScreen'
 import ProcessosScreen from './screens/ProcessosScreen'
+import PerfilScreen from './screens/PerfilScreen'
 import NavBar from './components/NavBar'
+import FeedbackToast from './components/FeedbackToast'
 
 const theme = {
   colors: {
@@ -41,12 +43,14 @@ function AppContent() {
 
   const renderTela = () => {
     if (tela === 'processos') return <ProcessosScreen />
+    if (tela === 'perfil') return <PerfilScreen />
     return <HomeScreen />
   }
 
   return (
     <VistoProvider>
       <NavBar tela={tela} setTela={setTela} />
+      <FeedbackToast />
       {renderTela()}
     </VistoProvider>
   )

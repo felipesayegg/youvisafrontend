@@ -84,6 +84,9 @@ export default function NavBar({ tela, setTela }) {
         <NavBtn $ativo={tela === 'processos'} onClick={() => setTela('processos')}>
           Processos
         </NavBtn>
+        <NavBtn $ativo={tela === 'perfil'} onClick={() => setTela('perfil')}>
+          Perfil
+        </NavBtn>
       </NavLinks>
       <UserArea>
         <UserName>{usuario?.nome}</UserName>

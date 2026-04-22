@@ -130,11 +130,38 @@ const Empty = styled.p`
 `
 
 const TIPOS = ['Turismo', 'Estudo', 'Trabalho', 'Reunião Familiar']
+const FILTROS = ['Todos', 'Em Análise', 'Aprovado', 'Recusado', 'Pendente']
+
+const FiltroBar = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+`
+
+const FiltroBtn = styled.button`
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1.5px solid ${({ $ativo, theme }) => $ativo ? theme.colors.brand : '#DDD'};
+  background: ${({ $ativo, theme }) => $ativo ? theme.colors.brand : 'white'};
+  color: ${({ $ativo, theme }) => $ativo ? 'white' : theme.colors.textLight};
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: ${({ theme }) => theme.fonts.primary};
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.brand};
+    color: ${({ $ativo, theme }) => $ativo ? 'white' : theme.colors.brand};
+  }
+`
 
 export default function ProcessosScreen() {
   const { vistos, adicionarVisto } = useVistos()
   const [mostrarForm, setMostrarForm] = useState(false)
   const [tipoSelecionado, setTipoSelecionado] = useState(TIPOS[0])
+  const [filtroAtivo, setFiltroAtivo] = useState('Todos')
 
   const handleSalvar = () => {
     adicionarVisto(tipoSelecionado)
@@ -145,6 +172,10 @@ export default function ProcessosScreen() {
   const ordenados = [...vistos].sort(
     (a, b) => new Date(b.dataSolicitacao) - new Date(a.dataSolicitacao)
   )
+
+  const filtrados = filtroAtivo === 'Todos'
+    ? ordenados
+    : ordenados.filter((v) => v.status === filtroAtivo)
 
   const formatarData = (iso) => new Date(iso).toLocaleDateString('pt-BR')
 
@@ -178,8 +209,16 @@ export default function ProcessosScreen() {
         </FormCard>
       )}
 
-      {ordenados.length === 0 ? (
-        <Empty>Nenhum processo encontrado. Crie uma nova solicitação!</Empty>
+      <FiltroBar>
+        {FILTROS.map((f) => (
+          <FiltroBtn key={f} $ativo={filtroAtivo === f} onClick={() => setFiltroAtivo(f)}>
+            {f}
+          </FiltroBtn>
+        ))}
+      </FiltroBar>
+
+      {filtrados.length === 0 ? (
+        <Empty>Nenhum processo encontrado para este filtro.</Empty>
       ) : (
         <Table>
           <thead>
@@ -191,9 +230,9 @@ export default function ProcessosScreen() {
             </tr>
           </thead>
           <tbody>
-            {ordenados.map((v, i) => (
+            {filtrados.map((v, i) => (
               <tr key={v.id}>
-                <Td style={{ color: '#999', fontSize: '0.8rem' }}>{ordenados.length - i}</Td>
+                <Td style={{ color: '#999', fontSize: '0.8rem' }}>{filtrados.length - i}</Td>
                 <Td>{v.tipoVisto}</Td>
                 <Td><StatusBadge status={v.status} /></Td>
                 <Td>{formatarData(v.dataSolicitacao)}</Td>
